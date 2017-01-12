@@ -60,6 +60,35 @@ extension ViewController: GMSMapViewDelegate{
      */
     func mapView(_ mapView: GMSMapView, didLongPressAt coordinate: CLLocationCoordinate2D) {
         print("In \(self.classForCoder).didLongPressAt \(coordinate)")
+        RVGeocoder.sharedInstance.reverseGeocodeCoordinate(coordinate) { (response: GMSReverseGeocodeResponse?, error: Error?) in
+            if let error = error {
+                print(error.localizedDescription)
+            } else if let response = response {
+                if let results: [GMSAddress] = response.results() {
+                    print("In \(self.classForCoder).didLongPress reverse Geocode response, have \(results.count) results")
+                    if let address: GMSAddress = results.first {
+                        print("In \(self.classForCoder).didLongPressAt reverseGeocode result first is \(address)")
+                        let marker = RVMarker(position: address.coordinate)
+                        if let lines = address.lines {
+                            if let first: String = lines.first {
+                                marker.title = first // address
+                            }
+                            if lines.count > 1 {
+                                marker.snippet = lines[1] // City, State, Zip
+                            }
+                            // locality: La Honda,  administrativeArea: California,, postalCode: 94020, country: United States
+                            // thoroughfare: 25718-25778 Moody Road
+                        }
+                        marker.appearAnimation = kGMSMarkerAnimationPop
+                        marker.map = mapView
+                    }
+                } else {
+                    print("In \(self.classForCoder).didLongPress reverseGeocode response, no reverse geoCode at \(coordinate)")
+                }
+            } else {
+                print("In \(self.classForCoder).didLongPress at \(coordinate) no error but no result to reverse geocode at \(coordinate)")
+            }
+        }
     }
     /**
      * Called after a marker has been tapped.
@@ -113,7 +142,8 @@ extension ViewController: GMSMapViewDelegate{
         }
         // The Tap has been handled so return true
         print("In \(self.classForCoder).didTap, return value is: [\(returnValue)]")
-        return returnValue
+       // return returnValue
+        return false
     }
     
     
@@ -343,6 +373,9 @@ class ViewController: UIViewController {
             self.addDefaultMarkers()
         }
 
+    }
+    func setupGeocoder() {
+        
     }
     func addDefaultMarkers() {
         installSantaMarker()
