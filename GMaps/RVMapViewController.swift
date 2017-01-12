@@ -9,6 +9,7 @@
 import UIKit
 import GoogleMaps
 
+
 class RVMapViewController: UIViewController {
     let sydneyMarker = RVMarker(position: CLLocationCoordinate2DMake(37.7, -122.3))
     let santaMarker = RVMarker(position: CLLocationCoordinate2DMake(37.8, -122.0))
@@ -20,7 +21,7 @@ class RVMapViewController: UIViewController {
     var markerCount: Int = 0
     
 
-    @IBOutlet weak var mapView: GMSMapView!
+    @IBOutlet weak var mapView: RVMapView!
     @IBOutlet weak var switcher: UISegmentedControl!
     
     @IBOutlet weak var addressTextField: UITextField!
@@ -58,12 +59,9 @@ class RVMapViewController: UIViewController {
         super.viewDidLoad()
         if let switcher = self.switcher {
             switcher.selectedSegmentIndex = 0
-        } else {
-            print("In \(self.classForCoder).loadView, did not find Switcher")
         }
         installActionSheet()
         if let mapView = self.mapView {
-            print("In \(self.classForCoder).viewDidLoad(), have mapView --------------------- ")
             mapView.addObserver(self, forKeyPath: myLocationKeyPath, options: NSKeyValueObservingOptions.new, context: nil)
             mapView.settings.myLocationButton = true
             mapView.settings.compassButton = true
@@ -82,6 +80,8 @@ class RVMapViewController: UIViewController {
                 self.addDefaultMarkers()
             }
         }
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
     }
  
     deinit {
@@ -91,7 +91,9 @@ class RVMapViewController: UIViewController {
     }
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         print("In ViewCOntroller.observeValue \(keyPath) ========================")
-        
+        if keyPath != self.myLocationKeyPath {
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+        }
         if !firstLocationUpdated {
          //   if let change = change {
          //       if let location = change[NSKeyValueChangeKey.newKey] as? CLLocation {
@@ -102,9 +104,7 @@ class RVMapViewController: UIViewController {
          //   }
             
         }
-        if keyPath != self.myLocationKeyPath {
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-        }
+
         
     }
     func randf() -> CLLocationDegrees {
@@ -139,6 +139,30 @@ class RVMapViewController: UIViewController {
                 if let mapView = self.mapView {
                     mapView.mapType = type.gmsType
                 }
+            }
+        }
+    }
+    func reverseGeocodeCoordinate(coordinate: CLLocationCoordinate2D) {
+        let geocoder = RVGeocoder.sharedInstance
+        geocoder.RVReverseGeocodeCoorindate(coordinate: coordinate) { (addresses, error) in
+            if let error = error {
+                print(error.localizedDescription)
+            } else if addresses.count > 0 {
+                if let address = addresses.first {
+                    if let lines: [String] = address.lines {
+                        if let label = self.addressLabel {
+                            print("IN \(self.classForCoder).reverseGeocodCoordinate. Made it to label setup")
+                            label.text = lines.joined(separator: "\n")
+                            let labelHeight = label.intrinsicContentSize.height
+                            self.mapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: labelHeight, right: 0)
+                            UIView.animate(withDuration: 0.25, animations: {
+                                self.view.layoutIfNeeded()
+                            })
+                        }
+                    }
+                }
+            } else {
+                print("In \(self.classForCoder).reverseGeocodeCoordinate, no results")
             }
         }
     }
@@ -275,7 +299,8 @@ extension RVMapViewController: GMSMapViewDelegate{
      * animations have completed (or after the camera has been explicitly set).
      */
     func mapView(_ mapView: GMSMapView, idleAt position: GMSCameraPosition) {
-        //print("In \(self.classForCoder).idleAt \(position)")
+        print("In \(self.classForCoder).idleAt \(position)")
+        self.reverseGeocodeCoordinate(coordinate: position.target)
     }
     
     
