@@ -115,6 +115,10 @@ class RVGMaps {
 
 }
 class RVMarker: GMSMarker {
+    init(position: CLLocationCoordinate2D) {
+        super.init()
+        self.position = position
+    }
 }
 class RVMapView: GMSMapView {
     

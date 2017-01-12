@@ -12,6 +12,10 @@
 		2814FDB31E26EEF000C7CB51 /* mapstyle-retro.json in Resources */ = {isa = PBXBuildFile; fileRef = 2814FDB21E26EEF000C7CB51 /* mapstyle-retro.json */; };
 		2814FDB51E26EF2900C7CB51 /* mapstyle-night.json in Resources */ = {isa = PBXBuildFile; fileRef = 2814FDB41E26EF2900C7CB51 /* mapstyle-night.json */; };
 		2814FDB71E26EF9000C7CB51 /* mapstyle-silver.json in Resources */ = {isa = PBXBuildFile; fileRef = 2814FDB61E26EF9000C7CB51 /* mapstyle-silver.json */; };
+		2814FDB91E26F36A00C7CB51 /* popup_santa.png in Resources */ = {isa = PBXBuildFile; fileRef = 2814FDB81E26F36A00C7CB51 /* popup_santa.png */; };
+		2814FDBB1E27008300C7CB51 /* glow-marker.png in Resources */ = {isa = PBXBuildFile; fileRef = 2814FDBA1E27008300C7CB51 /* glow-marker.png */; };
+		2814FDBD1E2700E500C7CB51 /* arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 2814FDBC1E2700E500C7CB51 /* arrow.png */; };
+		2814FDBF1E27561400C7CB51 /* RVLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2814FDBE1E27561400C7CB51 /* RVLocation.swift */; };
 		283499001E26B1FC00F52088 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 283498FF1E26B1FC00F52088 /* AppDelegate.swift */; };
 		283499021E26B1FC00F52088 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 283499011E26B1FC00F52088 /* ViewController.swift */; };
 		283499051E26B1FC00F52088 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 283499031E26B1FC00F52088 /* Main.storyboard */; };
@@ -47,6 +51,10 @@
 		2814FDB21E26EEF000C7CB51 /* mapstyle-retro.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "mapstyle-retro.json"; sourceTree = "<group>"; };
 		2814FDB41E26EF2900C7CB51 /* mapstyle-night.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "mapstyle-night.json"; sourceTree = "<group>"; };
 		2814FDB61E26EF9000C7CB51 /* mapstyle-silver.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "mapstyle-silver.json"; sourceTree = "<group>"; };
+		2814FDB81E26F36A00C7CB51 /* popup_santa.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = popup_santa.png; sourceTree = "<group>"; };
+		2814FDBA1E27008300C7CB51 /* glow-marker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glow-marker.png"; sourceTree = "<group>"; };
+		2814FDBC1E2700E500C7CB51 /* arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arrow.png; sourceTree = "<group>"; };
+		2814FDBE1E27561400C7CB51 /* RVLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RVLocation.swift; sourceTree = "<group>"; };
 		283498FC1E26B1FC00F52088 /* GMaps.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GMaps.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		283498FF1E26B1FC00F52088 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		283499011E26B1FC00F52088 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -100,6 +108,9 @@
 		2814FDB01E26EE4500C7CB51 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2814FDBC1E2700E500C7CB51 /* arrow.png */,
+				2814FDBA1E27008300C7CB51 /* glow-marker.png */,
+				2814FDB81E26F36A00C7CB51 /* popup_santa.png */,
 				2814FDB21E26EEF000C7CB51 /* mapstyle-retro.json */,
 				2814FDB41E26EF2900C7CB51 /* mapstyle-night.json */,
 				2814FDB61E26EF9000C7CB51 /* mapstyle-silver.json */,
@@ -140,6 +151,7 @@
 				283499081E26B1FC00F52088 /* LaunchScreen.storyboard */,
 				2834990B1E26B1FC00F52088 /* Info.plist */,
 				2814FDAE1E26B54700C7CB51 /* RVGMaps.swift */,
+				2814FDBE1E27561400C7CB51 /* RVLocation.swift */,
 			);
 			path = GMaps;
 			sourceTree = "<group>";
@@ -306,6 +318,9 @@
 			files = (
 				2834990A1E26B1FC00F52088 /* LaunchScreen.storyboard in Resources */,
 				2814FDB51E26EF2900C7CB51 /* mapstyle-night.json in Resources */,
+				2814FDBB1E27008300C7CB51 /* glow-marker.png in Resources */,
+				2814FDB91E26F36A00C7CB51 /* popup_santa.png in Resources */,
+				2814FDBD1E2700E500C7CB51 /* arrow.png in Resources */,
 				283499071E26B1FC00F52088 /* Assets.xcassets in Resources */,
 				2814FDB71E26EF9000C7CB51 /* mapstyle-silver.json in Resources */,
 				283499051E26B1FC00F52088 /* Main.storyboard in Resources */,
@@ -472,6 +487,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2814FDBF1E27561400C7CB51 /* RVLocation.swift in Sources */,
 				2814FDAF1E26B54700C7CB51 /* RVGMaps.swift in Sources */,
 				283499021E26B1FC00F52088 /* ViewController.swift in Sources */,
 				283499001E26B1FC00F52088 /* AppDelegate.swift in Sources */,
