@@ -307,11 +307,7 @@ class ViewController: UIViewController {
     let types = [RVGMaps.MapType.normal.rawValue, RVGMaps.MapType.satellite.rawValue, RVGMaps.MapType.hybrid.rawValue, RVGMaps.MapType.terrain.rawValue]
     private var firstLocationUpdated: Bool = false
     var markerCount: Int = 0
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        
-    }
+
     func installSantaMarker() {
         santaMarker = RVMarker(position: CLLocationCoordinate2DMake(37.8, -122.0))
         if let image = UIImage(named: "arrow.png") {
@@ -361,7 +357,6 @@ class ViewController: UIViewController {
         } else {
             print("In \(self.classForCoder).loadView, mapView is nil")
         }
-        mapView.settings.myLocationButton = true
         mapView.addObserver(self, forKeyPath: myLocationKeyPath, options: NSKeyValueObservingOptions.new, context: nil)
 
         view = mapView
@@ -516,6 +511,7 @@ class ViewController: UIViewController {
         print("In ViewCOntroller.observeValue \(keyPath) ========================")
         
         if !firstLocationUpdated {
+            /*
             if let change = change {
                 if let location = change[NSKeyValueChangeKey.newKey] as? CLLocation {
                     let zoom: Float = 14.0
@@ -523,6 +519,7 @@ class ViewController: UIViewController {
                     return
                 }
             }
+*/
             
         }
         super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)

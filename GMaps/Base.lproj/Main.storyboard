@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="2OU-Bx-VMl">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="8CF-Wa-G4k">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -26,14 +27,112 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1076" y="138.98050974512745"/>
+            <point key="canvasLocation" x="1119" y="793"/>
+        </scene>
+        <!--Map View Controller-->
+        <scene sceneID="f0m-5z-2th">
+            <objects>
+                <viewController id="Mkw-tu-AuL" customClass="RVMapViewController" customModule="GMaps" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="co7-hb-7SK"/>
+                        <viewControllerLayoutGuide type="bottom" id="ftr-kp-MNg"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="ibs-X3-K1F">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="tyD-ai-Ykc">
+                                <rect key="frame" x="0.0" y="64" width="375" height="29"/>
+                                <segments>
+                                    <segment title="Normal"/>
+                                    <segment title="Satellite"/>
+                                    <segment title="Hybrid"/>
+                                    <segment title="Terrain"/>
+                                </segments>
+                                <connections>
+                                    <action selector="didChangeSwitcherWithControl:" destination="Mkw-tu-AuL" eventType="valueChanged" id="cY1-mw-RDS"/>
+                                </connections>
+                            </segmentedControl>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="oXr-Rl-gMu">
+                                <rect key="frame" x="0.0" y="93" width="375" height="30"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dQV-px-6AC" customClass="GMSMapView">
+                                <rect key="frame" x="0.0" y="123" width="375" height="544"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" alpha="0.84999999999999998" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Address Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zIb-OA-PxH">
+                                        <rect key="frame" x="0.0" y="520" width="375" height="24"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="24" id="yyG-hf-TSF"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="zIb-OA-PxH" secondAttribute="trailing" id="H5C-f9-e6L"/>
+                                    <constraint firstItem="zIb-OA-PxH" firstAttribute="leading" secondItem="dQV-px-6AC" secondAttribute="leading" id="XuH-yI-W2P"/>
+                                    <constraint firstAttribute="bottom" secondItem="zIb-OA-PxH" secondAttribute="bottom" id="kMZ-MB-I0I"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="oXr-Rl-gMu" firstAttribute="top" secondItem="tyD-ai-Ykc" secondAttribute="bottom" constant="1" id="8e7-VI-OQY"/>
+                            <constraint firstAttribute="trailing" secondItem="dQV-px-6AC" secondAttribute="trailing" id="QF0-C6-KWP"/>
+                            <constraint firstItem="tyD-ai-Ykc" firstAttribute="leading" secondItem="ibs-X3-K1F" secondAttribute="leading" id="TtQ-qW-KTd"/>
+                            <constraint firstItem="dQV-px-6AC" firstAttribute="leading" secondItem="ibs-X3-K1F" secondAttribute="leading" id="a01-AR-dhj"/>
+                            <constraint firstItem="oXr-Rl-gMu" firstAttribute="leading" secondItem="ibs-X3-K1F" secondAttribute="leading" id="n0h-GD-Kr0"/>
+                            <constraint firstItem="dQV-px-6AC" firstAttribute="top" secondItem="oXr-Rl-gMu" secondAttribute="bottom" id="n69-ba-2hi"/>
+                            <constraint firstItem="tyD-ai-Ykc" firstAttribute="top" secondItem="co7-hb-7SK" secondAttribute="bottom" id="r5K-EG-i33"/>
+                            <constraint firstAttribute="trailing" secondItem="tyD-ai-Ykc" secondAttribute="trailing" id="rLf-u3-X11"/>
+                            <constraint firstItem="ftr-kp-MNg" firstAttribute="top" secondItem="dQV-px-6AC" secondAttribute="bottom" id="wbK-R0-DQ1"/>
+                            <constraint firstAttribute="trailing" secondItem="oXr-Rl-gMu" secondAttribute="trailing" id="wxx-Nu-jub"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="g7q-2B-V7w">
+                        <barButtonItem key="leftBarButtonItem" title="Clear" id="nFl-lc-E2L">
+                            <connections>
+                                <action selector="clearButtonTouchedWithButton:" destination="Mkw-tu-AuL" id="pAO-kA-e8D"/>
+                            </connections>
+                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem systemItem="add" id="QSc-NJ-Sd6">
+                                <connections>
+                                    <action selector="addButtonTouchedWithButton:" destination="Mkw-tu-AuL" id="scp-4C-fnq"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="Style" id="gzY-QP-4Jd">
+                                <connections>
+                                    <action selector="styleButtonTouchedWithButton:" destination="Mkw-tu-AuL" id="Whj-Yg-NT2"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="addressLabel" destination="zIb-OA-PxH" id="WgV-fU-MXG"/>
+                        <outlet property="addressTextField" destination="oXr-Rl-gMu" id="VxR-vE-Hvf"/>
+                        <outlet property="mapView" destination="dQV-px-6AC" id="v7J-7d-hD5"/>
+                        <outlet property="switcher" destination="tyD-ai-Ykc" id="7ME-fi-bXh"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7gC-Xa-lMY" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1189.5999999999999" y="1522.488755622189"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="igq-sd-DHs">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="2OU-Bx-VMl" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="OriginalNavController" automaticallyAdjustsScrollViewInsets="NO" id="2OU-Bx-VMl" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="vwz-0y-wPX">
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="375" height="667"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="vwz-0y-wPX">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -45,6 +144,26 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="efm-ca-szZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="344.80000000000001" y="792.95352323838085"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="mNf-36-BQI">
+            <objects>
+                <navigationController storyboardIdentifier="RVMapNavigationController" automaticallyAdjustsScrollViewInsets="NO" id="8CF-Wa-G4k" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="375" height="667"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="kEm-Hl-4Cm">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="Mkw-tu-AuL" kind="relationship" relationship="rootViewController" id="s7b-7b-Y5s"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="nz9-xj-kKm" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="364" y="1523"/>
         </scene>
     </scenes>
 </document>
