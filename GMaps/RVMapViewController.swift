@@ -9,10 +9,115 @@
 import UIKit
 import GoogleMaps
 
+extension RVMapViewController: UISearchBarDelegate {
+
+
+    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+        searchBar.text = ""
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        /*
+         searchBar.text = ""
+         searchBar.resignFirstResponder()
+         removeSearchBar()
+         */
+
+        print("searchBarCancelButtonClicked")
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        searchBar.prompt = nil
+        searchBar.placeholder = "Search..."
+        //  p("", "5 searchBarTextDidEndEditing")
+        
+    }
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+
+        //      p("", "4 searchBarSearchButtonClicked")
+    }
+    
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        searchBar.prompt = "Task Search"
+        print( "1 searchBarTextDidBeginEditing")
+        
+    }
+    /*
+     func searchBarBookmarkButtonClicked(_ searchBar: UISearchBar) {
+     //  p("", "2 searchBarBookmarkButtonClicked")
+     
+     }
+     func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
+     
+     return true
+     }
+     func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+     return true
+     }
+     func searchBarResultsListButtonClicked(_ searchBar: UISearchBar) {
+     //  p("", "3 searchBarResultsListButtonClicked")
+     }
+     */
+}
+extension RVMapViewController: UITableViewDelegate {
+    
+}
+extension RVMapViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    
+        return UITableViewCell()
+    }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.addressItems.count
+    }
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    func installRefresh() {
+        self.refreshControl.backgroundColor = UIColor.purple
+        self.refreshControl.tintColor = UIColor.white
+        self.refreshControl.addTarget(self , action: #selector(refresh), for: UIControlEvents.valueChanged)
+        self.tableView.backgroundView = self.refreshControl
+        self.tableView.separatorStyle = UITableViewCellSeparatorStyle.singleLineEtched
+    }
+    func refresh() {
+        // self.tableView.reloadData
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d, h:mm a"
+        let title = "Last update: \(formatter.string(from: Date()))"
+        let attrsDictionary = [NSForegroundColorAttributeName : UIColor.white]
+        let attributedTitle = NSAttributedString(string: title, attributes: attrsDictionary)
+        self.refreshControl.attributedTitle = attributedTitle
+
+        self.refreshControl.endRefreshing()
+    }
+}
+
+extension RVMapViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        if let text = searchController.searchBar.text {
+            print("Search text is \(text)")
+        }
+    }
+    /*
+     override func getScopeIndex(searchBar: UISearchBar) -> Int {
+     var scopeIndex = -1
+     let selectedIndex = self.segmentedControl.selectedSegmentIndex
+     if selectedIndex >= 0 && selectedIndex < scopes.count {
+     scopeIndex = selectedIndex
+     }
+     return scopeIndex
+     }
+     */
+}
 
 class RVMapViewController: UIViewController {
     let sydneyMarker = RVMarker(position: CLLocationCoordinate2DMake(37.7, -122.3))
     let santaMarker = RVMarker(position: CLLocationCoordinate2DMake(37.8, -122.0))
+    let addressItems = [RVLocation]()
+    let refreshControl = UIRefreshControl()
+    let searchController = UISearchController(searchResultsController: nil)
     let locationManager = CLLocationManager()
     let myLocationKeyPath: String = "myLocation"
     let types = [RVGMaps.MapType.normal.rawValue, RVGMaps.MapType.satellite.rawValue, RVGMaps.MapType.hybrid.rawValue, RVGMaps.MapType.terrain.rawValue]
@@ -20,6 +125,7 @@ class RVMapViewController: UIViewController {
     var actionSheet: UIAlertController!
     var markerCount: Int = 0
     
+    @IBOutlet weak var tableView: UITableView!
 
     @IBOutlet weak var mapView: RVMapView!
     @IBOutlet weak var switcher: UISegmentedControl!
@@ -27,6 +133,8 @@ class RVMapViewController: UIViewController {
     @IBOutlet weak var addressTextField: UITextField!
     @IBOutlet weak var addressLabel: UILabel!
     
+    @IBAction func serachButtonTouched(_ sender: UIBarButtonItem) {
+    }
     
     @IBAction func addButtonTouched(button: UIBarButtonItem) {
         for index in (0..<10) {
@@ -60,6 +168,7 @@ class RVMapViewController: UIViewController {
         if let switcher = self.switcher {
             switcher.selectedSegmentIndex = 0
         }
+        
         installActionSheet()
         if let mapView = self.mapView {
             mapView.addObserver(self, forKeyPath: myLocationKeyPath, options: NSKeyValueObservingOptions.new, context: nil)
@@ -82,6 +191,40 @@ class RVMapViewController: UIViewController {
         }
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
+        configureSearchController()
+    }
+    func configureSearchController() {
+        if let tableView = self.tableView {
+
+                searchController.searchResultsUpdater = self
+                searchController.dimsBackgroundDuringPresentation = false
+               // var titles = [String]()
+
+                let searchBar = searchController.searchBar
+                //searchBar.scopeButtonTitles = titles
+                //searchBar.selectedScopeButtonIndex = 0
+                searchBar.delegate = self
+                
+                searchBar.prompt = nil
+                // searchBar.isTranslucent = false
+                // searchBar.searchBarStyle = UISearchBarStyle.prominent
+                //    searchBar.showsSearchResultsButton = true
+                searchBar.placeholder = " Search..."
+                // searchBar.isTranslucent = false
+                //  searchBar.backgroundImage = UIImage()
+                // searchBar.showsCancelButton = true
+                UISearchBar.appearance().barTintColor = UIColor.orange
+                UISearchBar.appearance().tintColor = UIColor.blue
+                UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = UIColor.blue
+                
+                
+                
+                definesPresentationContext = true
+                tableView.tableHeaderView = searchController.searchBar
+
+        } else {
+            print("In \(self.classForCoder).configureSearchController, tableView not set")
+        }
     }
  
     deinit {

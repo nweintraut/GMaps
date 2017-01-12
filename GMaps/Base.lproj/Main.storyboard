@@ -63,6 +63,17 @@
                                 <rect key="frame" x="0.0" y="123" width="375" height="544"/>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="iwa-ga-CNH">
+                                <rect key="frame" x="0.0" y="64" width="375" height="242"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="242" id="TtC-ha-96u"/>
+                                </constraints>
+                                <connections>
+                                    <outlet property="dataSource" destination="Mkw-tu-AuL" id="oFY-7J-qB7"/>
+                                    <outlet property="delegate" destination="Mkw-tu-AuL" id="yfA-Cd-ufW"/>
+                                </connections>
+                            </tableView>
                             <label opaque="NO" userInteractionEnabled="NO" alpha="0.84999999999999998" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Address Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zIb-OA-PxH">
                                 <rect key="frame" x="0.0" y="643" width="375" height="24"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -76,12 +87,15 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="iwa-ga-CNH" firstAttribute="top" secondItem="co7-hb-7SK" secondAttribute="bottom" id="5Mc-wE-OSV"/>
                             <constraint firstItem="oXr-Rl-gMu" firstAttribute="top" secondItem="tyD-ai-Ykc" secondAttribute="bottom" constant="1" id="8e7-VI-OQY"/>
+                            <constraint firstAttribute="trailing" secondItem="iwa-ga-CNH" secondAttribute="trailing" id="Enl-Jk-wql"/>
                             <constraint firstItem="zIb-OA-PxH" firstAttribute="leading" secondItem="ibs-X3-K1F" secondAttribute="leading" id="Mp2-oa-8QM"/>
                             <constraint firstAttribute="trailing" secondItem="dQV-px-6AC" secondAttribute="trailing" id="QF0-C6-KWP"/>
                             <constraint firstItem="tyD-ai-Ykc" firstAttribute="leading" secondItem="ibs-X3-K1F" secondAttribute="leading" id="TtQ-qW-KTd"/>
                             <constraint firstItem="dQV-px-6AC" firstAttribute="leading" secondItem="ibs-X3-K1F" secondAttribute="leading" id="a01-AR-dhj"/>
                             <constraint firstAttribute="trailing" secondItem="zIb-OA-PxH" secondAttribute="trailing" id="dDJ-Ag-pwu"/>
+                            <constraint firstItem="iwa-ga-CNH" firstAttribute="leading" secondItem="ibs-X3-K1F" secondAttribute="leading" id="fvN-hL-9aK"/>
                             <constraint firstItem="ftr-kp-MNg" firstAttribute="top" secondItem="zIb-OA-PxH" secondAttribute="bottom" id="mRk-Vf-mLs"/>
                             <constraint firstItem="oXr-Rl-gMu" firstAttribute="leading" secondItem="ibs-X3-K1F" secondAttribute="leading" id="n0h-GD-Kr0"/>
                             <constraint firstItem="dQV-px-6AC" firstAttribute="top" secondItem="oXr-Rl-gMu" secondAttribute="bottom" id="n69-ba-2hi"/>
@@ -92,20 +106,27 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="g7q-2B-V7w">
-                        <barButtonItem key="leftBarButtonItem" title="Clear" id="nFl-lc-E2L">
-                            <connections>
-                                <action selector="clearButtonTouchedWithButton:" destination="Mkw-tu-AuL" id="pAO-kA-e8D"/>
-                            </connections>
-                        </barButtonItem>
+                        <leftBarButtonItems>
+                            <barButtonItem title="Clear" id="nFl-lc-E2L">
+                                <connections>
+                                    <action selector="clearButtonTouchedWithButton:" destination="Mkw-tu-AuL" id="pAO-kA-e8D"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="Style" id="gzY-QP-4Jd">
+                                <connections>
+                                    <action selector="styleButtonTouchedWithButton:" destination="Mkw-tu-AuL" id="Whj-Yg-NT2"/>
+                                </connections>
+                            </barButtonItem>
+                        </leftBarButtonItems>
                         <rightBarButtonItems>
                             <barButtonItem systemItem="add" id="QSc-NJ-Sd6">
                                 <connections>
                                     <action selector="addButtonTouchedWithButton:" destination="Mkw-tu-AuL" id="scp-4C-fnq"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem title="Style" id="gzY-QP-4Jd">
+                            <barButtonItem systemItem="search" id="FP9-CV-6Uc">
                                 <connections>
-                                    <action selector="styleButtonTouchedWithButton:" destination="Mkw-tu-AuL" id="Whj-Yg-NT2"/>
+                                    <action selector="serachButtonTouched:" destination="Mkw-tu-AuL" id="heF-hU-Kf0"/>
                                 </connections>
                             </barButtonItem>
                         </rightBarButtonItems>
@@ -115,6 +136,7 @@
                         <outlet property="addressTextField" destination="oXr-Rl-gMu" id="VxR-vE-Hvf"/>
                         <outlet property="mapView" destination="dQV-px-6AC" id="v7J-7d-hD5"/>
                         <outlet property="switcher" destination="tyD-ai-Ykc" id="7ME-fi-bXh"/>
+                        <outlet property="tableView" destination="iwa-ga-CNH" id="ZqD-Y5-97G"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7gC-Xa-lMY" userLabel="First Responder" sceneMemberID="firstResponder"/>
