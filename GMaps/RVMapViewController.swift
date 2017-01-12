@@ -152,6 +152,7 @@ class RVMapViewController: UIViewController {
                     if let lines: [String] = address.lines {
                         if let label = self.addressLabel {
                             print("IN \(self.classForCoder).reverseGeocodCoordinate. Made it to label setup")
+                            label.unlock()
                             label.text = lines.joined(separator: "\n")
                             let labelHeight = label.intrinsicContentSize.height
                             self.mapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: labelHeight, right: 0)
@@ -280,7 +281,11 @@ extension RVMapViewController: GMSMapViewDelegate{
      *
      * @param gesture If YES, this is occuring due to a user gesture.
      */
-    func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {}
+    func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
+        if let addressLabel = self.addressLabel {
+            addressLabel.lock()
+        }
+    }
     
     
     /**
