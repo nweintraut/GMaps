@@ -124,7 +124,9 @@ class RVMapViewController: UIViewController {
     private var firstLocationUpdated: Bool = false
     var actionSheet: UIAlertController!
     var markerCount: Int = 0
-    
+    let dataProvider =  RVGoogleDataProvider()
+    let searchRadius: Double = 1000.0
+    var searchedTypes = ["bakery", "bar", "cafe", "grocery_or_supermarket", "restaurant"]
     @IBOutlet weak var tableView: UITableView!
 
     @IBOutlet weak var mapView: RVMapView!
@@ -163,6 +165,9 @@ class RVMapViewController: UIViewController {
         }
     }
 
+    @IBAction func refreshButtonTouched(_ sender: UIBarButtonItem) {
+        self.fetchNearbyPlaces(coordinate: mapView.camera.target)
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         if let switcher = self.switcher {
@@ -310,7 +315,15 @@ class RVMapViewController: UIViewController {
             }
         }
     }
-
+    func fetchNearbyPlaces(coordinate: CLLocationCoordinate2D) {
+        mapView.clear()
+        dataProvider.fetchPlacesNearCoordinate(coordinate: coordinate , radius: self.searchRadius, types: self.searchedTypes) { (places, error ) in
+            for place: RVGooglePlace in places {
+                let marker = RVMarker(place: place)
+                marker.map = self.mapView
+            }
+        }
+    }
 }
 extension RVMapViewController {
     func installActionSheet() {
@@ -718,6 +731,7 @@ extension RVMapViewController: CLLocationManagerDelegate {
         if let location = locations.first {
             mapView.camera = GMSCameraPosition(target: location.coordinate, zoom: 11, bearing: 0, viewingAngle: 0)
             locationManager.stopUpdatingLocation()
+            self.fetchNearbyPlaces(coordinate: location.coordinate)
         }
     }
 }

@@ -114,10 +114,27 @@ class RVGMaps {
     }
 
 }
+
 class RVMarker: GMSMarker {
+    var place: RVGooglePlace?
     init(position: CLLocationCoordinate2D) {
         super.init()
         self.position = position
+    }
+    init(place: RVGooglePlace) {
+        self.place = place
+        super.init()
+        if let coordinate = place.coordinate {
+            self.position = coordinate
+        }
+        icon = nil
+        if let type = place.placeType {
+            if let image = UIImage(named: type + "_pin") {
+                icon = image
+            }
+        }
+        groundAnchor = CGPoint(x: 0.5, y: 1.0)
+        appearAnimation = kGMSMarkerAnimationPop
     }
 }
 class RVMapView: GMSMapView {
