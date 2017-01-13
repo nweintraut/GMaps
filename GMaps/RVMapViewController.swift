@@ -299,7 +299,7 @@ class RVMapViewController: UIViewController {
                 if let address = addresses.first {
                     if let lines: [String] = address.lines {
                         if let label = self.addressLabel {
-                            print("IN \(self.classForCoder).reverseGeocodCoordinate. Made it to label setup")
+                            //print("IN \(self.classForCoder).reverseGeocodCoordinate. Made it to label setup")
                             label.unlock()
                             label.text = lines.joined(separator: "\n")
                             let labelHeight = label.intrinsicContentSize.height
@@ -655,7 +655,38 @@ extension RVMapViewController: GMSMapViewDelegate{
      * @return The custom view to display as contents in the info window, or nil to
      * use the default content rendering instead
      */
-    // func mapView(_ mapView: GMSMapView, markerInfoContents marker: GMSMarker) -> UIView? {}
+    func mapView(_ mapView: GMSMapView, markerInfoContents marker: GMSMarker) -> UIView? {
+       // print("In RVMapViewController.markerInfoContent")
+        if let marker = marker as? RVMarker {
+            if let infoView = UIView.viewFromNibName(name: "RVMarkerInfoView") as? RVMarkerInfoView {
+                if let label = infoView.nameLabel {
+                    if let location = marker.location {
+                       // print("Title is \(location.title)")
+                      //  print(location.toString())
+                        label.text = location.title
+                    } else {
+                                        print("In RVMapVIewController.markerInfoContent, no Title")
+                    }
+                } else {
+                    print("In RVMapVIewController.markerInfoContent, no label")
+                }
+                if let imageView = infoView.placePhoto {
+                    if let location = marker.location {
+                        if let image = location.photo {
+                            imageView.image = image
+                            // print("In RVMapViewController.markerInfoContent, have PHoto")
+                            return infoView
+                        } else {
+                            print("In RVMapViewController.markerInfoContent, no photo")
+                        }
+                    }
+                }
+            } else {
+                print("In RVMapVIewController.markerInfoContent, no RVMarkerInfoView")
+            }
+        }
+        return nil
+    }
     
     
     /**

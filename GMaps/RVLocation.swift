@@ -8,15 +8,137 @@
 
 import UIKit
 import CoreLocation
+import GoogleMaps
+class RVGeocodeTerm {
+    var types = [String]()
+    var value: AnyObject
+    init(types: [String], value: AnyObject) {
+        self.value = value
+        self.types = types
+    }
+}
 class RVLocation: RVBaseModel {
+    enum GeocodeKeys: String {
+        case formatted_address = "formatted_address"
+        case address_components = "address_components"
+        
+    }
     override class var absoluteModelType: RVModelType { return RVModelType.Image }
     private var rawPlaces = [String: AnyObject]()
+    private var gmsAddress: GMSAddress? = nil
+    var photo: UIImage? = nil
     init(rawPlaces: [String: AnyObject]) {
         super.init()
         self.modelType = RVLocation.absoluteModelType
         print("In RVLocation, Neil, need to create id creationg")
         absorbPlaces(rawPlaces: rawPlaces)
         print("IN RVLocation, need to create ID create for rawPlaces init")
+    }
+    init(gmsAddress: GMSAddress) {
+        super.init()
+        self.modelType = RVLocation.absoluteModelType
+        print("IN RVLocation, need to create ID create for rawPlaces init")
+    }
+    init(geocode: [String : AnyObject]) {
+        super.init()
+        self.modelType = RVLocation.absoluteModelType
+        absorbGeocode(geocode: geocode)
+    }
+    private func absorbGeocode(geocode: [String: AnyObject]) {
+        var title = ""
+        if let geometry = geocode[RVGooglePlace.Keys.geometry.rawValue] as? [String : AnyObject] {
+            if let location = geometry[RVGooglePlace.Keys.location.rawValue] as? [String : NSNumber] {
+                if let latitude = location[RVGooglePlace.Keys.lat.rawValue] {
+                    if let longitude = location[RVGooglePlace.Keys.lng.rawValue] {
+                        self.latitude = latitude.doubleValue
+                        self.longitude = longitude.doubleValue
+                    }
+                }
+            }
+        }
+        if let formattedAddress = geocode[GeocodeKeys.formatted_address.rawValue] as? String {
+            self.lines = [formattedAddress]
+            self.address = formattedAddress
+        }
+        if let address_components = geocode[GeocodeKeys.address_components.rawValue] as? [[String:AnyObject]] {
+            var bigArray = [ RVGeocodeTerm]()
+            for index in (0..<address_components.count) {
+              //  print("***********************************")
+                let component = address_components[index]
+                var types = [String]()
+                var count: Int = 0
+                for (key, value) in component {
+                //    print("Address component: \(key) : \(value)")
+                //    print("--------------")
+                    let mod = count % 3
+                    count = count + 1
+                    if mod == 0 {
+                        if let value = value as? [String] {
+                            types = value
+                        } else {
+                            print("In \(self.classForCoder).absorbGeocode failed casting types \(key):\(value)")
+                        }
+                    } else if mod == 1 {
+                        bigArray.append(RVGeocodeTerm(types: types, value: value))
+                    }
+                    
+                }
+            }
+            for term in bigArray {
+                for type in term.types {
+                    if type == "street_number" {
+                        if let value = term.value as? String {
+                            title = "\(value)"
+                        }
+                        // do nothing "1600"
+                    } else if type == "route" {
+                        if let value = term.value as? String {
+                            title = "\(title) \(value)"
+                        }
+                        // do nothing "Ampitheatre Way"
+                    } else if type == "locality" {
+                        if let city = term.value as? String {
+                            self.city = city
+                        }
+                    } else if type == "administrative_area_level_2" {
+                        // do nothing "Santa Clara County"
+                    } else if type == "administrative_area_level_1" {
+                        if let state = term.value as? String {
+                            self.state = state
+                        }
+                    } else if type == "country" {
+                        if let country = term.value as? String {
+                            self.country = country
+                        }
+                    } else if type == "postal_code" {
+                        if let postal_code = term.value as? String {
+                            self.postalCode = postal_code
+                        }
+                    } else if type == "political" {
+                        // do nothing
+                    } else {
+                        print("In RVLocation.absorbGeocode no match \(type) \(term.value)")
+                    }
+                }
+            }
+        } else {
+            print("RVLocation.absorbGeocode Didnt get address components")
+        }
+        if let string = geocode[RVGooglePlace.Keys.place_id.rawValue] as? String { self.place_id = string }
+        if title != "" { self.title = title }
+    }
+    private func absorbGMSAddress(gmsAddress: GMSAddress) {
+        let coordinate = gmsAddress.coordinate
+        self.latitude = coordinate.latitude
+        self.longitude = coordinate.longitude
+        if let string = gmsAddress.thoroughfare {self.thoroughfare = string }
+        if let string = gmsAddress.locality {self.locality = string }
+        if let string = gmsAddress.subLocality {self.subLocality = string }
+        if let string = gmsAddress.administrativeArea {self.administrativeArea = string }
+        if let string = gmsAddress.postalCode {self.postalCode = string }
+        if let string = gmsAddress.country {self.country = string }
+        if let array  = gmsAddress.lines {self.lines = array }
+        self.gmsAddress = gmsAddress
     }
     private func absorbPlaces(rawPlaces: [String: AnyObject]) {
         self.rawPlaces = rawPlaces
@@ -111,6 +233,58 @@ class RVLocation: RVBaseModel {
         get { return getString(key: .reference) }
         set { updateString(key: .reference, value: newValue, setDirties: true)}
     }
+    /** Street number and name. */
+    var thoroughfare: String? {
+        get { return getString(key: .thoroughfare) }
+        set { updateString(key: .thoroughfare, value: newValue, setDirties: true)}
+    }
+    /** Locality or city. */
+    var locality: String? {
+        get { return getString(key: .locality) }
+        set { updateString(key: .locality, value: newValue, setDirties: true)}
+    }
+    /** Subdivision of locality, district or park. */
+    var subLocality: String? {
+        get { return getString(key: .subLocality) }
+        set { updateString(key: .subLocality, value: newValue, setDirties: true)}
+    }
+    /** Region/State/Administrative area. */
+    var administrativeArea: String? {
+        get { return getString(key: .administrativeArea) }
+        set { updateString(key: .administrativeArea, value: newValue, setDirties: true)}
+    }
+
+    var postalCode: String? {
+        get { return getString(key: .postalCode) }
+        set { updateString(key: .postalCode, value: newValue, setDirties: true)}
+    }
+    var city: String? {
+        get { return getString(key: .city) }
+        set { updateString(key: .city, value: newValue, setDirties: true)}
+    }
+    var state: String? {
+        get { return getString(key: .state) }
+        set { updateString(key: .state, value: newValue, setDirties: true)}
+    }
+    var country: String? {
+        get { return getString(key: .country) }
+        set { updateString(key: .country, value: newValue, setDirties: true)}
+    }
+    var lines: [String]? {
+        get {
+            if let array = objects[RVKeys.lines.rawValue] as? [String] { return array }
+            return nil
+        }
+        set {
+            updateAnyObject(key: .lines, value: newValue as AnyObject , setDirties: true)
+        }
+    }
+    var firstLine: String? {
+        get {
+            if let lines = self.lines { return lines.first}
+            return nil
+        }
+    }
     var iconURL: URL? {
         get {
             if let raw = getString(key: .iconURL) {
@@ -158,7 +332,22 @@ class RVLocation: RVBaseModel {
         if let value = self.longitude {
             output = "\(output) Longitude = \(value), "
         } else {
-            output = "\(output) <no longitude>,"
+            output = "\(output) <no longitude>\n"
+        }
+        if let value = self.city {
+            output = "\(output) city = \(value), "
+        } else {
+            output = "\(output) <no city>, "
+        }
+        if let value = self.state {
+            output = "\(output) state = \(value), "
+        } else {
+            output = "\(output) <no state>, "
+        }
+        if let zip = self.postalCode {
+            output = "\(output) zip = \(zip), "
+        } else {
+            output = "\(output) <no zip>, "
         }
         
         if let value = self.iconURL {

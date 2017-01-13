@@ -31,4 +31,13 @@ enum RVKeys: String {
     case record_id = "record_id"
     case place_id = "place_id"
     case types = "types"
+    case thoroughfare = "thoroughfare"
+    case locality = "locality"
+    case subLocality = "subLocality"
+    case administrativeArea = "administrativeArea"
+    case city = "city"
+    case state = "state"
+    case postalCode = "postalCode"
+    case country = "country"
+    case lines = "lines"
 }

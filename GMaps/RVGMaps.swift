@@ -117,12 +117,14 @@ class RVGMaps {
 
 class RVMarker: GMSMarker {
     var place: RVGooglePlace?
+    var location: RVLocation?
     init(position: CLLocationCoordinate2D) {
         super.init()
         self.position = position
     }
     init(location: RVLocation) {
         super.init()
+        self.location = location
         if let coordinate = location.coordinate {
             self.position = coordinate
         }

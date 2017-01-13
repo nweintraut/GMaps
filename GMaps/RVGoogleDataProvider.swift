@@ -50,18 +50,18 @@ class RVGoogleDataProvider {
                     print("In RVGoogleDataProvider, cancel task")
                     task.cancel()
                 }
-                print("In RVGoogleDataProvider.fetch about to do Query")
+              //  print("In RVGoogleDataProvider.fetch about to do Query")
                 UIApplication.shared.isNetworkActivityIndicatorVisible = true
                 placesTask = session.dataTask(with: url) {data, response, error in
                     UIApplication.shared.isNetworkActivityIndicatorVisible = false
                     if let error = error {
-                        print("In RVGoogleDataProvider.fetch.... got server error \(error.localizedDescription) for url \(url.absoluteString)")
+                       // print("In RVGoogleDataProvider.fetch.... got server error \(error.localizedDescription) for url \(url.absoluteString)")
                         let rvError = RVError(message: "In RVGoogleDatProvider.fetch got server error with URL\n\(url.absoluteString)\n", sourceError: error)
                         callback([RVLocation](), rvError)
                         return
                     } else if let response = response {
                         if let response = response as? HTTPURLResponse {
-                            print("Got statusCode of \(response.statusCode)")
+                           // print("Got statusCode of \(response.statusCode)")
                             if response.statusCode == 200 {
                                 
                                 let placesArray = [RVLocation]()
@@ -75,6 +75,17 @@ class RVGoogleDataProvider {
                                                     let result = results[index]
                                                     let location = RVLocation(rawPlaces: result)
                                                     locations.append(location)
+                                                    if let image = location.image {
+                                                        if let photoReference = image.photo_reference {
+                                                            self.fetchPhotoFromReference(reference: photoReference, completion: { (image , error) in
+                                                                if let error = error {
+                                                                    print("In RVGoogleDataProvider, got error \(error.message), \(error.sourceError?.localizedDescription)")
+                                                                } else if let image = image {
+                                                                    location.photo = image
+                                                                }
+                                                            })
+                                                        }
+                                                    }
                                                 }
                                                 DispatchQueue.main.async {
                                                     callback(locations, nil)
@@ -136,27 +147,70 @@ class RVGoogleDataProvider {
     }
     
     
-    func fetchPhotoFromReference(reference: String, completion: @escaping ((UIImage?) -> Void)) -> () {
+    func fetchPhotoFromReference(reference: String, completion: @escaping (_ image: UIImage?, _ error: RVError?) -> Void) -> () {
         if let photo = photoCache[reference] as UIImage? {
-            completion(photo)
+            completion(photo, nil)
         } else {
             let urlString = "http://localhost:10000/maps/api/place/photo?maxwidth=200&photoreference=\(reference)"
             UIApplication.shared.isNetworkActivityIndicatorVisible = true
-            session.downloadTask(with: NSURL(string: urlString)! as URL) {url, response, error in
-                UIApplication.shared.isNetworkActivityIndicatorVisible = false
-                if let url = url {
-                    let downloadedPhoto = UIImage(data: NSData(contentsOf: url)! as Data)
-                    self.photoCache[reference] = downloadedPhoto
-                    DispatchQueue.main.async() {
-                        completion(downloadedPhoto)
+            if let url = URL(string: urlString) {
+                session.downloadTask(with: url) {url, response, error in
+                    UIApplication.shared.isNetworkActivityIndicatorVisible = false
+                    if let error = error {
+                        DispatchQueue.main.async {
+                            let rvError = RVError(message: "In RVGoogleDataProvider.fetchPhoto... got Error from server", sourceError: error)
+                            completion(nil, rvError)
+                        }
+                        return
+                    } else if let response = response as? HTTPURLResponse {
+                        if response.statusCode == 200 {
+                            if let url = url {
+                                do {
+                                    let data = try Data(contentsOf: url)
+                                    if let downloadedPhoto = UIImage(data: data) {
+                                        self.photoCache[reference] = downloadedPhoto
+                                        DispatchQueue.main.async() {
+                                            completion(downloadedPhoto, nil)
+                                        }
+                                        return
+                                    } else {
+                                        DispatchQueue.main.async() {
+                                            let rvError = RVError(message: "In RVGoogleDataProvider.fetchPhoto... no downloadedPhoto")
+                                            completion(nil, rvError )
+                                        }
+                                        return
+                                    }
+                                } catch let error {
+                                    DispatchQueue.main.async() {
+                                        let rvError = RVError(message: "In RVGoogleDataProvider.fetchPhoto... getting image generated exception", sourceError: error)
+                                        completion(nil, rvError )
+                                    }
+                                    return
+                                }
+                            } else {
+                                DispatchQueue.main.async() {
+                                    let rvError = RVError(message: "In RVGoogleDataProvider.fetchPhoto... no url")
+                                    completion(nil, rvError )
+                                }
+                                return
+                            }
+                        } else {
+                            DispatchQueue.main.async {
+                                let rvError = RVError(message: "In RVGoogleDataProvider.fetchPhoto.... no error but response code: \(response.statusCode)", sourceError: nil)
+                                completion(nil, rvError)
+                            }
+                            return
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            let rvError = RVError(message: "In RVGoogleDataProvider.fetchPhoto.... no error but response did not cast", sourceError: nil)
+                            completion(nil, rvError)
+                        }
+                        return
                     }
-                }
-                else {
-                    DispatchQueue.main.async() {
-                        completion(nil)
-                    }
-                }
                 }.resume()
+            }
+ 
         }
     }
 }
