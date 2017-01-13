@@ -8,6 +8,7 @@
 
 import UIKit
 import GoogleMaps
+import GooglePlaces
 
 extension RVMapViewController: UISearchBarDelegate {
 
@@ -93,7 +94,29 @@ extension RVMapViewController: UITableViewDataSource {
         self.refreshControl.endRefreshing()
     }
 }
-
+// https://developers.google.com/places/ios-api/autocomplete#add_an_autocomplete_ui_control
+extension RVMapViewController: GMSAutocompleteViewControllerDelegate {
+    // Handle the user's selection
+    func viewController(_ viewController: GMSAutocompleteViewController, didAutocompleteWith place: GMSPlace) {
+        print("Place name: \(place.name), address: \(place.formattedAddress), attributions: \(place.attributions)")
+        dismiss(animated: true) { }
+    }
+    func viewController(_ viewController: GMSAutocompleteViewController, didFailAutocompleteWithError error: Error) {
+        print("In \(self.classForCoder).didFailAutocompleteWithError: \(error.localizedDescription)")
+    }
+    func viewController(_ viewController: GMSAutocompleteViewController, didSelect prediction: GMSAutocompletePrediction) -> Bool {
+        return true
+    }
+    func wasCancelled(_ viewController: GMSAutocompleteViewController) {
+        dismiss(animated: true) {}
+    }
+    func didRequestAutocompletePredictions(_ viewController: GMSAutocompleteViewController) {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+    }
+    func didUpdateAutocompletePredictions(_ viewController: GMSAutocompleteViewController) {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = false
+    }
+}
 extension RVMapViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         if let text = searchController.searchBar.text {
@@ -136,6 +159,11 @@ class RVMapViewController: UIViewController {
     @IBOutlet weak var addressLabel: UILabel!
     
     @IBAction func serachButtonTouched(_ sender: UIBarButtonItem) {
+        let autocompleteController = GMSAutocompleteViewController()
+        autocompleteController.delegate = self
+        present(autocompleteController, animated: true) { 
+            //
+        }
     }
     
     @IBAction func addButtonTouched(button: UIBarButtonItem) {
@@ -755,6 +783,16 @@ extension RVMapViewController: CLLocationManagerDelegate {
         if status == .authorizedWhenInUse || status == .authorizedAlways {
             print("In \(self.classForCoder).didChangeAuthorization, authorized")
             locationManager.startUpdatingLocation()
+            RVMyLocation.sharedInstance.authorized = true
+            RVMyLocation.sharedInstance.myPlace(callback: { (locations, error ) in
+                if let error = error {
+                    print("In \(self.classForCoder).didChangeAuthorization, got error: \(error.message), \(error.sourceError?.localizedDescription)")
+                } else if locations.count > 0 {
+                    print("In \(self.classForCoder).didChange... have locations")
+                } else {
+                    print("In \(self.classForCoder).didChange... no error but no location for MyPlace")
+                }
+            })
         } else {
             print("In \(self.classForCoder).didChangeAuthorization, not Authorized")
         }

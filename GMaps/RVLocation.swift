@@ -9,6 +9,8 @@
 import UIKit
 import CoreLocation
 import GoogleMaps
+import GooglePlaces
+
 class RVGeocodeTerm {
     var types = [String]()
     var value: AnyObject
@@ -34,15 +36,60 @@ class RVLocation: RVBaseModel {
         absorbPlaces(rawPlaces: rawPlaces)
         print("IN RVLocation, need to create ID create for rawPlaces init")
     }
+    init(googlePlace: GMSPlace) {
+        super.init()
+        self.modelType = RVLocation.absoluteModelType
+        print("IN RVLocation, need to create ID create for googlePlace init")
+        absorbPlace(place: googlePlace)
+    }
     init(gmsAddress: GMSAddress) {
         super.init()
         self.modelType = RVLocation.absoluteModelType
-        print("IN RVLocation, need to create ID create for rawPlaces init")
+        print("IN RVLocation, need to create ID create for gmsAddress init")
+        absorbGMSAddress(gmsAddress: gmsAddress)
     }
     init(geocode: [String : AnyObject]) {
         super.init()
         self.modelType = RVLocation.absoluteModelType
         absorbGeocode(geocode: geocode)
+    }
+    private func absorbPlace(place: GMSPlace) {
+        self.latitude = place.coordinate.latitude
+        self.longitude = place.coordinate.longitude
+        self.title = place.name
+        if let components: [GMSAddressComponent] = place.addressComponents {
+            for component in components {
+                if component.type == "street_number" {
+                    self.street_number = component.name
+                } else if component.type == "route" { // Address
+                    self.route = component.name
+                } else if component.type == "neighborhood" { // Central Portola Valley
+                    self.neighborhood = component.name
+                } else if component.type == "locality" { // Portola Valley
+                    self.locality = component.name
+                } else if component.type == "administrative_area_level_1" { // state
+                   self.state = component.name
+                } else if component.type == "administrative_area_level_2" { // county
+                    
+                } else if component.type == "country" {
+                    self.country = component.name
+                } else if component.type == "postal_code" {
+                    self.postalCode = component.name
+                } else if component.type == "subpremise" { // such as "1b"
+                    
+                } else {
+                    print("IN \(self.classForCoder).absorbPlace, got component that was unaddress \(component.type) : \(component.name)")
+                }
+            }
+        }
+        if let string = place.formattedAddress {
+            self.address = string
+            self.lines  = [string]
+        }
+        self.place_id = place.placeID
+        if let url = place.website { self.website = url }
+        if let phone = place.phoneNumber { self.phoneNumber = phone }
+        
     }
     private func absorbGeocode(geocode: [String: AnyObject]) {
         var title = ""
@@ -89,11 +136,13 @@ class RVLocation: RVBaseModel {
                     if type == "street_number" {
                         if let value = term.value as? String {
                             title = "\(value)"
+                            self.street_number = value
                         }
                         // do nothing "1600"
                     } else if type == "route" {
                         if let value = term.value as? String {
                             title = "\(title) \(value)"
+                            self.route = value
                         }
                         // do nothing "Ampitheatre Way"
                     } else if type == "locality" {
@@ -115,6 +164,8 @@ class RVLocation: RVBaseModel {
                             self.postalCode = postal_code
                         }
                     } else if type == "political" {
+                        // do nothing
+                    } else if type == "subpremise" {
                         // do nothing
                     } else {
                         print("In RVLocation.absorbGeocode no match \(type) \(term.value)")
@@ -163,7 +214,7 @@ class RVLocation: RVBaseModel {
         if let types = rawPlaces[RVGooglePlace.Keys.types.rawValue] as? [String] { self.types = types }
         if let photos = rawPlaces[RVGooglePlace.Keys.photos.rawValue] as? [[String : AnyObject]] {
             if let photo = photos.first {
-                print("---------- In RVLocation.absorbPlaces..... have photo 8888888888")
+                //print("---------- In RVLocation.absorbPlaces..... have photo 8888888888")
                 let image = RVImage()
                 if let height = photo[RVGooglePlace.Keys.height.rawValue] as? NSNumber { image.height = CGFloat(height.doubleValue) }
                 if let width = photo[RVGooglePlace.Keys.width.rawValue] as? NSNumber { image.width = CGFloat(width.doubleValue) }
@@ -270,6 +321,22 @@ class RVLocation: RVBaseModel {
         get { return getString(key: .country) }
         set { updateString(key: .country, value: newValue, setDirties: true)}
     }
+    var street_number: String? {
+        get { return getString(key: .street_number) }
+        set { updateString(key: .street_number, value: newValue, setDirties: true)}
+    }
+    var route: String? {
+        get { return getString(key: .route) }
+        set { updateString(key: .route, value: newValue, setDirties: true)}
+    }
+    var neighborhood: String? {
+        get { return getString(key: .neighborhood) }
+        set { updateString(key: .neighborhood, value: newValue, setDirties: true)}
+    }
+    var phoneNumber: String? {
+        get { return getString(key: .phoneNumber) }
+        set { updateString(key: .phoneNumber, value: newValue, setDirties: true)}
+    }
     var lines: [String]? {
         get {
             if let array = objects[RVKeys.lines.rawValue] as? [String] { return array }
@@ -299,6 +366,24 @@ class RVLocation: RVBaseModel {
                 updateString(key: .iconURL, value: url.absoluteString, setDirties: true)
             } else {
                 updateString(key: .iconURL, value: nil, setDirties: true)
+            }
+            
+        }
+    }
+    var website: URL? {
+        get {
+            if let raw = getString(key: .website) {
+                return URL(string: raw)
+            } else {
+                return nil
+            }
+            
+        }
+        set {
+            if let url = newValue {
+                updateString(key: .website, value: url.absoluteString, setDirties: true)
+            } else {
+                updateString(key: .website, value: nil, setDirties: true)
             }
             
         }

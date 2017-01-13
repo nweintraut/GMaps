@@ -9,14 +9,7 @@
 import GoogleMaps
 import GooglePlaces
 
-class RVError: Error {
-    var sourceError: Error?
-    var message: String = ""
-    init(message: String = "", sourceError: Error? = nil) {
-        self.sourceError = sourceError
-        self.message = message
-    }
-}
+
 
 class RVGMSMapStyle: GMSMapStyle {
     
@@ -66,7 +59,7 @@ class RVGMaps {
     }()
     init() {
         GMSServices.provideAPIKey(APIKey)
-        GMSPlacesClient.provideAPIKey(APIKey)
+        GMSPlacesClient.provideAPIKey(RVAPIKeys.GooglePlacesAPIKey.rawValue)
     }
     func mapView(latitude: CLLocationDegrees, longitude: CLLocationDegrees, zoom: Float) -> RVMapView {
         let camera = GMSCameraPosition.camera(withLatitude: latitude, longitude: longitude, zoom: zoom)

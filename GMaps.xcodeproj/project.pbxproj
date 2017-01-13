@@ -35,6 +35,8 @@
 		285995721E28632F0012554E /* RVModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285995711E28632F0012554E /* RVModelType.swift */; };
 		285995751E28664E0012554E /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285995741E28664E0012554E /* File.swift */; };
 		285995771E2866710012554E /* RVLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285995761E2866710012554E /* RVLocation.swift */; };
+		2888E3301E29569300900B36 /* RVError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2888E32F1E29569300900B36 /* RVError.swift */; };
+		2888E3321E2956D400900B36 /* RVAPIKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2888E3311E2956D400900B36 /* RVAPIKeys.swift */; };
 		289B13C11E28918400AD08D9 /* RVMarkerInfoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 289B13C01E28918400AD08D9 /* RVMarkerInfoView.xib */; };
 		289B13C31E28919C00AD08D9 /* RVMarkerInfoVIew.swift in Sources */ = {isa = PBXBuildFile; fileRef = 289B13C21E28919C00AD08D9 /* RVMarkerInfoVIew.swift */; };
 		59FFF494160C855FEF6A69AC /* Pods_GMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 56E8BE6310E916182A91B29F /* Pods_GMaps.framework */; };
@@ -94,6 +96,8 @@
 		285995711E28632F0012554E /* RVModelType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RVModelType.swift; sourceTree = "<group>"; };
 		285995741E28664E0012554E /* File.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		285995761E2866710012554E /* RVLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RVLocation.swift; sourceTree = "<group>"; };
+		2888E32F1E29569300900B36 /* RVError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RVError.swift; sourceTree = "<group>"; };
+		2888E3311E2956D400900B36 /* RVAPIKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RVAPIKeys.swift; sourceTree = "<group>"; };
 		289B13C01E28918400AD08D9 /* RVMarkerInfoView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RVMarkerInfoView.xib; sourceTree = "<group>"; };
 		289B13C21E28919C00AD08D9 /* RVMarkerInfoVIew.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RVMarkerInfoVIew.swift; sourceTree = "<group>"; };
 		56E8BE6310E916182A91B29F /* Pods_GMaps.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GMaps.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -184,6 +188,8 @@
 				2814FDC21E2801B300C7CB51 /* RVMapViewController.swift */,
 				285995611E2820CB0012554E /* UIView+Extension.swift */,
 				285995671E28418F0012554E /* String+Extension.swift */,
+				2888E32F1E29569300900B36 /* RVError.swift */,
+				2888E3311E2956D400900B36 /* RVAPIKeys.swift */,
 			);
 			path = GMaps;
 			sourceTree = "<group>";
@@ -565,7 +571,9 @@
 				283499021E26B1FC00F52088 /* ViewController.swift in Sources */,
 				283499001E26B1FC00F52088 /* AppDelegate.swift in Sources */,
 				285995751E28664E0012554E /* File.swift in Sources */,
+				2888E3321E2956D400900B36 /* RVAPIKeys.swift in Sources */,
 				2859956A1E285A8F0012554E /* RVKeys.swift in Sources */,
+				2888E3301E29569300900B36 /* RVError.swift in Sources */,
 				285995771E2866710012554E /* RVLocation.swift in Sources */,
 				285995681E28418F0012554E /* String+Extension.swift in Sources */,
 				2814FDC11E27698700C7CB51 /* RVGeocoder.swift in Sources */,

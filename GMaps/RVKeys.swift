@@ -40,4 +40,9 @@ enum RVKeys: String {
     case postalCode = "postalCode"
     case country = "country"
     case lines = "lines"
+    case website = "website"
+    case phoneNumber = "phoneNumber"
+    case neighborhood = "neighborhood"
+    case street_number = "street_number"
+    case route = "route"
 }

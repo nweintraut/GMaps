@@ -8,6 +8,39 @@
 
 import UIKit
 import CoreLocation
+import GooglePlaces
+
+extension RVMyLocation {
+    func myPlace(callback: @escaping(_ location: [RVLocation], _ error: RVError?)-> Void) {
+        var locations = [RVLocation]()
+        if self.authorized {
+            placesClient.currentPlace(callback: { (placeLikelihoodList: GMSPlaceLikelihoodList?, error) in
+
+                if let error = error {
+                    let rvError = RVError(message: "In \(self.classForCoder).myPlace, got Google error", sourceError: error)
+                    callback(locations, rvError)
+                    return
+                } else if let placeLikelihoodList = placeLikelihoodList {
+
+                    for likelihood: GMSPlaceLikelihood in placeLikelihoodList.likelihoods {
+                        let place: GMSPlace = likelihood.place
+                      //  print("In \(self.classForCoder).myPlace, likelihood = \(likelihood.likelihood), name = \(place.name), address = \(place.formattedAddress), \(place.coordinate.latitude) \(place.coordinate.longitude), ")
+                        locations.append(RVLocation(googlePlace: place))
+                    }
+                    callback(locations, nil)
+                    return 
+                } else {
+                    callback(locations, nil)
+                }
+            })
+            return
+        } else {
+            print("-------------------- In \(self.classForCoder).myPlace, not authorized to get location")
+            let error = RVError(message: "In \(self.classForCoder).myPlace, not authorized to get location")
+            callback(locations, error)
+        }
+    }
+}
 
 class RVMyLocation: NSObject {
     private var delegates = [RVMyLocationDelegate]()
@@ -15,11 +48,13 @@ class RVMyLocation: NSObject {
     private var lastLocation: CLLocation? = nil
     private var lastHeading: CLHeading? = nil
     private let timeInterval: TimeInterval = 10.0
-    private var authorized: Bool = false
+    var authorized: Bool = false
+    let placesClient = GMSPlacesClient()
     static let sharedInstance: RVMyLocation = {
         let rvLocation = RVMyLocation()
         rvLocation.locationManager.delegate = rvLocation
-        rvLocation.locationManager.requestWhenInUseAuthorization()
+        //rvLocation.locationManager.requestWhenInUseAuthorization()
+        rvLocation.locationManager.requestAlwaysAuthorization()
         return rvLocation
     }()
     func addDelegate(delegate: RVMyLocationDelegate) {
@@ -61,6 +96,7 @@ class RVMyLocation: NSObject {
             locationManager.startUpdatingLocation()
             //locationManager.startMonitoringSignificantLocationChanges()
             locationManager.startUpdatingHeading()
+
         } else {
             authorized = false
             locationManager.stopUpdatingLocation()
