@@ -34,7 +34,7 @@ class RVGoogleDataProvider {
         return URLSession.shared
     }
     
-    func fetchPlacesNearCoordinate(coordinate: CLLocationCoordinate2D, radius: Double, types:[String], callback: @escaping ( _ places: [RVGooglePlace], _ error: RVError? )-> Void) -> ()
+    func fetchPlacesNearCoordinate(coordinate: CLLocationCoordinate2D, radius: Double, types:[String], callback: @escaping ( _ places: [RVLocation], _ error: RVError? )-> Void) -> ()
     {
         print("In RVGoogleDataProvider.fetch...")
         var urlString = "http://localhost:10000/maps/api/place/nearbysearch/json?location=\(coordinate.latitude),\(coordinate.longitude)&radius=\(radius)&rankby=prominence&sensor=true"
@@ -57,104 +57,80 @@ class RVGoogleDataProvider {
                     if let error = error {
                         print("In RVGoogleDataProvider.fetch.... got server error \(error.localizedDescription) for url \(url.absoluteString)")
                         let rvError = RVError(message: "In RVGoogleDatProvider.fetch got server error with URL\n\(url.absoluteString)\n", sourceError: error)
-                        callback([RVGooglePlace](), rvError)
+                        callback([RVLocation](), rvError)
                         return
                     } else if let response = response {
                         if let response = response as? HTTPURLResponse {
                             print("Got statusCode of \(response.statusCode)")
                             if response.statusCode == 200 {
                                 
-                                let placesArray = [RVGooglePlace]()
+                                let placesArray = [RVLocation]()
                                 if let data = data {
                                     do {
                                         let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers)
                                         if let json = json as? [String : AnyObject] {
                                             if let results = json["results"] as? [[String: AnyObject]] {
-                                                /*
-                                                if let place = results.first {
-                                                    for (key, value) in place {
-                                                        print("\(key): \(value)")
-                                                    }
-                                                }
-                                                */
+                                                var locations = [RVLocation]()
                                                 for index in 0..<results.count {
                                                     let result = results[index]
-                                                    var output = ""
-                                                    for (key, value) in result {
-                                                        output = "\(output) + \(key), "
-                                                        if key == "geometry" {
-                                                            if let value = value as? [String : AnyObject] {
-                                                                for (key, item) in value {
-                                                                   // print("\(key): \(item)")
-                                                                    if key == "location" {
-                                                                        if let item = item as? [String: Float] {
-                                                                        //    print ("\(item.first?.key) Lat is number") /// THIS IS IT.
-                                                                        } else if let item = item as? [String : String] {
-                                                                            print("Lat is string")
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                       // print("\(key): \(value)")
-                                                    }
-                                                   print("\(index)... \(output)")
-                                                    /*
-                                                    if let place = result.first {
-                                                        print("---------------------\nPlace \(result.count) \(index)... \(place)")
-                                                    }
- */
-
+                                                    let location = RVLocation(rawPlaces: result)
+                                                    locations.append(location)
                                                 }
- 
+                                                DispatchQueue.main.async {
+                                                    callback(locations, nil)
+                                                }
+                                                return
                                             } else {
-                                                print("Did not convert to results")
-                                                for (key, value) in json {
-                                                    print("\(key): \(value)")
+                                                DispatchQueue.main.async() {
+                                                    let error = RVError(message: "In RVGoogleDataProvider.fetch... results did not convert", sourceError: nil)
+                                                    callback([RVLocation](), error)
                                                 }
+                                                return
                                             }
-
+                                        } else {
+                                            DispatchQueue.main.async() {
+                                                let error = RVError(message: "In RVGoogleDataProvider.fetch... json did not convert to [String: AnyObject", sourceError: nil)
+                                                callback([RVLocation](), error)
+                                            }
+                                            return
                                         }
                                     } catch let myJSONError {
-                                        print(myJSONError)
+                                        DispatchQueue.main.async() {
+                                            let error = RVError(message: "In RVGoogleDataProvider.fetch... Exception convering JSON", sourceError: myJSONError)
+                                            callback([RVLocation](), error)
+                                        }
+                                        return
                                     }
-                                    /*
-                                     let json = JSON(data:aData, options:NSJSONReadingOptions.MutableContainers, error:nil)
-                                     if let results = json["results"].arrayObject as? [[String : AnyObject]] {
-                                     for rawPlace in results {
-                                     let place = GooglePlace(dictionary: rawPlace, acceptedTypes: types)
-                                     placesArray.append(place)
-                                     if let reference = place.photoReference {
-                                     self.fetchPhotoFromReference(reference) { image in
-                                     place.photo = image
-                                     }
-                                     }
-                                     }
-                                     }
-                                     */
+
+                                } else {
+                                    DispatchQueue.main.async() {
+                                        callback(placesArray, nil)
+                                    }
+                                    return
                                 }
-                                DispatchQueue.main.async() {
-                                    callback(placesArray, nil)
-                                }
-                                return
                             } else {
-                                let error = RVError(message: "In RVGoogleDataProvider.fetch... got bad status code of \(response.statusCode)", sourceError: nil)
-                                callback([RVGooglePlace](), error)
+                                DispatchQueue.main.async() {
+                                    let error = RVError(message: "In RVGoogleDataProvider.fetch... got bad status code of \(response.statusCode)", sourceError: nil)
+                                    callback([RVLocation](), error)
+                                }
                                 return
                             }
                         }
 
                     }
-                    let error = RVError(message: "In RVGoogleDataProvider.fetch. no server error but no response", sourceError: nil)
-                    callback([RVGooglePlace](), error)
+                    DispatchQueue.main.async {
+                        let error = RVError(message: "In RVGoogleDataProvider.fetch. no server error but no response", sourceError: nil)
+                        callback([RVLocation](), error)
+                    }
                 }
                 placesTask?.resume()
             } else {
-               print("In RVGoogleDataProvider.fetchPlacesNear... could not create URL from \(urlString)")
+                let rvError = RVError(message: "In RVGoogleDataProvider.fetchPlacesNear... could not create URL from \(urlString)", sourceError: nil)
+                callback([RVLocation](), rvError)
             }
-
         } else {
-            print("In RVGoogleDataProvider.fetchPlacesNear... bad URL String")
+            let rvError = RVError(message: "In RVGoogleDataProvider.fetchPlacesNear... bad URL String", sourceError: nil)
+            callback([RVLocation](), rvError)
         }
 
     }

@@ -15,7 +15,7 @@
 		2814FDB91E26F36A00C7CB51 /* popup_santa.png in Resources */ = {isa = PBXBuildFile; fileRef = 2814FDB81E26F36A00C7CB51 /* popup_santa.png */; };
 		2814FDBB1E27008300C7CB51 /* glow-marker.png in Resources */ = {isa = PBXBuildFile; fileRef = 2814FDBA1E27008300C7CB51 /* glow-marker.png */; };
 		2814FDBD1E2700E500C7CB51 /* arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 2814FDBC1E2700E500C7CB51 /* arrow.png */; };
-		2814FDBF1E27561400C7CB51 /* RVLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2814FDBE1E27561400C7CB51 /* RVLocation.swift */; };
+		2814FDBF1E27561400C7CB51 /* RVMyLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2814FDBE1E27561400C7CB51 /* RVMyLocation.swift */; };
 		2814FDC11E27698700C7CB51 /* RVGeocoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2814FDC01E27698700C7CB51 /* RVGeocoder.swift */; };
 		2814FDC31E2801B300C7CB51 /* RVMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2814FDC21E2801B300C7CB51 /* RVMapViewController.swift */; };
 		283499001E26B1FC00F52088 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 283498FF1E26B1FC00F52088 /* AppDelegate.swift */; };
@@ -29,6 +29,12 @@
 		285995641E2839960012554E /* RVGooglePlace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285995631E2839960012554E /* RVGooglePlace.swift */; };
 		285995661E283F020012554E /* RVGoogleDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285995651E283F020012554E /* RVGoogleDataProvider.swift */; };
 		285995681E28418F0012554E /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285995671E28418F0012554E /* String+Extension.swift */; };
+		2859956A1E285A8F0012554E /* RVKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285995691E285A8F0012554E /* RVKeys.swift */; };
+		2859956C1E285C760012554E /* RVBaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2859956B1E285C760012554E /* RVBaseModel.swift */; };
+		2859956E1E2862E70012554E /* RVImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2859956D1E2862E70012554E /* RVImage.swift */; };
+		285995721E28632F0012554E /* RVModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285995711E28632F0012554E /* RVModelType.swift */; };
+		285995751E28664E0012554E /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285995741E28664E0012554E /* File.swift */; };
+		285995771E2866710012554E /* RVLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285995761E2866710012554E /* RVLocation.swift */; };
 		59FFF494160C855FEF6A69AC /* Pods_GMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 56E8BE6310E916182A91B29F /* Pods_GMaps.framework */; };
 		D94F5BD704C546110C32993B /* Pods_GMapsUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDBAC0681A9276BF98BED85F /* Pods_GMapsUITests.framework */; };
 /* End PBXBuildFile section */
@@ -60,7 +66,7 @@
 		2814FDB81E26F36A00C7CB51 /* popup_santa.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = popup_santa.png; sourceTree = "<group>"; };
 		2814FDBA1E27008300C7CB51 /* glow-marker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glow-marker.png"; sourceTree = "<group>"; };
 		2814FDBC1E2700E500C7CB51 /* arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arrow.png; sourceTree = "<group>"; };
-		2814FDBE1E27561400C7CB51 /* RVLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RVLocation.swift; sourceTree = "<group>"; };
+		2814FDBE1E27561400C7CB51 /* RVMyLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RVMyLocation.swift; sourceTree = "<group>"; };
 		2814FDC01E27698700C7CB51 /* RVGeocoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RVGeocoder.swift; sourceTree = "<group>"; };
 		2814FDC21E2801B300C7CB51 /* RVMapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RVMapViewController.swift; sourceTree = "<group>"; };
 		283498FC1E26B1FC00F52088 /* GMaps.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GMaps.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -80,6 +86,12 @@
 		285995631E2839960012554E /* RVGooglePlace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RVGooglePlace.swift; sourceTree = "<group>"; };
 		285995651E283F020012554E /* RVGoogleDataProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RVGoogleDataProvider.swift; sourceTree = "<group>"; };
 		285995671E28418F0012554E /* String+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
+		285995691E285A8F0012554E /* RVKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RVKeys.swift; sourceTree = "<group>"; };
+		2859956B1E285C760012554E /* RVBaseModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RVBaseModel.swift; sourceTree = "<group>"; };
+		2859956D1E2862E70012554E /* RVImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RVImage.swift; sourceTree = "<group>"; };
+		285995711E28632F0012554E /* RVModelType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RVModelType.swift; sourceTree = "<group>"; };
+		285995741E28664E0012554E /* File.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
+		285995761E2866710012554E /* RVLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RVLocation.swift; sourceTree = "<group>"; };
 		56E8BE6310E916182A91B29F /* Pods_GMaps.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GMaps.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8DB166FC2884A1ABF2B12D36 /* Pods-GMapsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GMapsTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-GMapsTests/Pods-GMapsTests.release.xcconfig"; sourceTree = "<group>"; };
 		BDBAC0681A9276BF98BED85F /* Pods_GMapsUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GMapsUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -156,6 +168,7 @@
 		283498FE1E26B1FC00F52088 /* GMaps */ = {
 			isa = PBXGroup;
 			children = (
+				285995731E2866230012554E /* Models */,
 				283498FF1E26B1FC00F52088 /* AppDelegate.swift */,
 				283499011E26B1FC00F52088 /* ViewController.swift */,
 				283499031E26B1FC00F52088 /* Main.storyboard */,
@@ -163,7 +176,7 @@
 				283499081E26B1FC00F52088 /* LaunchScreen.storyboard */,
 				2834990B1E26B1FC00F52088 /* Info.plist */,
 				2814FDAE1E26B54700C7CB51 /* RVGMaps.swift */,
-				2814FDBE1E27561400C7CB51 /* RVLocation.swift */,
+				2814FDBE1E27561400C7CB51 /* RVMyLocation.swift */,
 				2814FDC01E27698700C7CB51 /* RVGeocoder.swift */,
 				2814FDC21E2801B300C7CB51 /* RVMapViewController.swift */,
 				285995611E2820CB0012554E /* UIView+Extension.swift */,
@@ -190,6 +203,19 @@
 				283499211E26B1FC00F52088 /* Info.plist */,
 			);
 			path = GMapsUITests;
+			sourceTree = "<group>";
+		};
+		285995731E2866230012554E /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				2859956D1E2862E70012554E /* RVImage.swift */,
+				285995711E28632F0012554E /* RVModelType.swift */,
+				285995691E285A8F0012554E /* RVKeys.swift */,
+				2859956B1E285C760012554E /* RVBaseModel.swift */,
+				285995741E28664E0012554E /* File.swift */,
+				285995761E2866710012554E /* RVLocation.swift */,
+			);
+			name = Models;
 			sourceTree = "<group>";
 		};
 		5200B91CB32F068363D1C734 /* Frameworks */ = {
@@ -506,15 +532,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				285995641E2839960012554E /* RVGooglePlace.swift in Sources */,
-				2814FDBF1E27561400C7CB51 /* RVLocation.swift in Sources */,
+				2814FDBF1E27561400C7CB51 /* RVMyLocation.swift in Sources */,
 				285995621E2820CB0012554E /* UIView+Extension.swift in Sources */,
 				285995661E283F020012554E /* RVGoogleDataProvider.swift in Sources */,
+				2859956E1E2862E70012554E /* RVImage.swift in Sources */,
+				2859956C1E285C760012554E /* RVBaseModel.swift in Sources */,
 				2814FDC31E2801B300C7CB51 /* RVMapViewController.swift in Sources */,
 				2814FDAF1E26B54700C7CB51 /* RVGMaps.swift in Sources */,
 				283499021E26B1FC00F52088 /* ViewController.swift in Sources */,
 				283499001E26B1FC00F52088 /* AppDelegate.swift in Sources */,
+				285995751E28664E0012554E /* File.swift in Sources */,
+				2859956A1E285A8F0012554E /* RVKeys.swift in Sources */,
+				285995771E2866710012554E /* RVLocation.swift in Sources */,
 				285995681E28418F0012554E /* String+Extension.swift in Sources */,
 				2814FDC11E27698700C7CB51 /* RVGeocoder.swift in Sources */,
+				285995721E28632F0012554E /* RVModelType.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

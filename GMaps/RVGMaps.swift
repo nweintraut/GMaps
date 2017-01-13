@@ -121,6 +121,24 @@ class RVMarker: GMSMarker {
         super.init()
         self.position = position
     }
+    init(location: RVLocation) {
+        super.init()
+        if let coordinate = location.coordinate {
+            self.position = coordinate
+        }
+        self.icon = nil
+        if let types = location.types {
+            if let type = types.first {
+                if let image = UIImage(named: type + "_pin") {
+                    self.icon = image
+                }
+            }
+
+        }
+        self.title = location.title 
+        groundAnchor = CGPoint(x: 0.5, y: 1.0)
+        appearAnimation = kGMSMarkerAnimationPop
+    }
     init(place: RVGooglePlace) {
         self.place = place
         super.init()

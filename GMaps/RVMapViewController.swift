@@ -115,7 +115,7 @@ extension RVMapViewController: UISearchResultsUpdating {
 class RVMapViewController: UIViewController {
     let sydneyMarker = RVMarker(position: CLLocationCoordinate2DMake(37.7, -122.3))
     let santaMarker = RVMarker(position: CLLocationCoordinate2DMake(37.8, -122.0))
-    let addressItems = [RVLocation]()
+    let addressItems = [RVMyLocation]()
     let refreshControl = UIRefreshControl()
     let searchController = UISearchController(searchResultsController: nil)
     let locationManager = CLLocationManager()
@@ -318,8 +318,9 @@ class RVMapViewController: UIViewController {
     func fetchNearbyPlaces(coordinate: CLLocationCoordinate2D) {
         mapView.clear()
         dataProvider.fetchPlacesNearCoordinate(coordinate: coordinate , radius: self.searchRadius, types: self.searchedTypes) { (places, error ) in
-            for place: RVGooglePlace in places {
-                let marker = RVMarker(place: place)
+            for place: RVLocation in places {
+                let marker = RVMarker(location: place)
+                //let marker = RVMarker(place: place)
                 marker.map = self.mapView
             }
         }

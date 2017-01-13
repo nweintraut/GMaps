@@ -2,112 +2,179 @@
 //  RVLocation.swift
 //  GMaps
 //
-//  Created by Neil Weintraut on 1/11/17.
+//  Created by Neil Weintraut on 1/12/17.
 //  Copyright © 2017 Neil Weintraut. All rights reserved.
 //
 
 import UIKit
 import CoreLocation
-
-class RVLocation: NSObject {
-    private var delegates = [RVLocationDelegate]()
-    private let locationManager = CLLocationManager()
-    private var lastLocation: CLLocation? = nil
-    private var lastHeading: CLHeading? = nil
-    private let timeInterval: TimeInterval = 10.0
-    private var authorized: Bool = false
-    static let sharedInstance: RVLocation = {
-        let rvLocation = RVLocation()
-        rvLocation.locationManager.delegate = rvLocation
-        rvLocation.locationManager.requestWhenInUseAuthorization()
-        return rvLocation
-    }()
-    func addDelegate(delegate: RVLocationDelegate) {
-        if let _ = findDelegate(delegate: delegate) {
-            // do nothing
-        } else {
-            delegates.append(delegate)
-        }
+class RVLocation: RVBaseModel {
+    override class var absoluteModelType: RVModelType { return RVModelType.Image }
+    private var rawPlaces = [String: AnyObject]()
+    init(rawPlaces: [String: AnyObject]) {
+        super.init()
+        self.modelType = RVLocation.absoluteModelType
+        print("In RVLocation, Neil, need to create id creationg")
+        absorbPlaces(rawPlaces: rawPlaces)
+        print("IN RVLocation, need to create ID create for rawPlaces init")
     }
-    func removeDelegate(delegate: RVLocationDelegate) {
-        for index in (0...delegates.count) {
-            if delegates[index].identifier == delegate.identifier {
-                delegates.remove(at: index)
-                break
+    private func absorbPlaces(rawPlaces: [String: AnyObject]) {
+        self.rawPlaces = rawPlaces
+        if let geometry = rawPlaces[RVGooglePlace.Keys.geometry.rawValue] as? [String : AnyObject] {
+            if let location = geometry[RVGooglePlace.Keys.location.rawValue] as? [String : NSNumber] {
+                if let latitude = location[RVGooglePlace.Keys.lat.rawValue] {
+                    if let longitude = location[RVGooglePlace.Keys.lng.rawValue] {
+                        self.latitude = latitude.doubleValue
+                        self.longitude = longitude.doubleValue
+                    }
+                }
             }
         }
-    }
-    private func findDelegate(delegate: RVLocationDelegate) -> RVLocationDelegate? {
-        for candidate in delegates {
-            if delegate.identifier == candidate.identifier { return candidate }
+        if let string = rawPlaces[RVGooglePlace.Keys.reference.rawValue] as? String { self.reference = string }
+        if let string = rawPlaces[RVGooglePlace.Keys.icon.rawValue] as? String {
+            if let url = URL(string: string) { self.iconURL = url }
         }
-        return nil
-    }
-    func mostRecentLocation(callback: @escaping(_ location: CLLocation?) -> Void) -> Void {
-        if let lastLocation = self.lastLocation {
-            if Date().timeIntervalSince1970 - lastLocation.timestamp.timeIntervalSince1970 > timeInterval {
-                locationManager.startUpdatingLocation()
-                locationManager.startUpdatingHeading()
-                print("In RVLocation.mostRecentLocation, Neil need to address this.")
+        if let string = rawPlaces[RVGooglePlace.Keys.vicinity.rawValue] as? String { self.address = string }
+        if let string = rawPlaces[RVGooglePlace.Keys.name.rawValue] as? String { self.title = string }
+        if let string = rawPlaces[RVGooglePlace.Keys.place_id.rawValue] as? String { self.place_id = string }
+        if let string = rawPlaces[RVGooglePlace.Keys.id.rawValue] as? String { self.record_id = string }
+        if let types = rawPlaces[RVGooglePlace.Keys.types.rawValue] as? [String] { self.types = types }
+        if let photos = rawPlaces[RVGooglePlace.Keys.photos.rawValue] as? [[String : AnyObject]] {
+            if let photo = photos.first {
+                print("---------- In RVLocation.absorbPlaces..... have photo 8888888888")
+                let image = RVImage()
+                if let height = photo[RVGooglePlace.Keys.height.rawValue] as? NSNumber { image.height = CGFloat(height.doubleValue) }
+                if let width = photo[RVGooglePlace.Keys.width.rawValue] as? NSNumber { image.width = CGFloat(width.doubleValue) }
+                if let string = photo[RVGooglePlace.Keys.photo_reference.rawValue] as? String { image.photo_reference = string }
+                self.image = image
             } else {
-                callback(lastLocation)
-                return
-            }
-        }
-    }
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        if status == .authorizedWhenInUse || status == .authorizedAlways {
-            authorized = true
-            locationManager.startUpdatingLocation()
-            //locationManager.startMonitoringSignificantLocationChanges()
-            locationManager.startUpdatingHeading()
-        } else {
-            authorized = false
-            locationManager.stopUpdatingLocation()
-        }
-    }
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let location: CLLocation = locations.first {
-            //
-            lastLocation = location
-            print("In RVLocation.didUpdateLocation with \(location)")
-            for delegate in delegates {
-                delegate.didUpdateLocation(location: location)
-            }
-            //mapView.camera = GMSCameraPosition(target: location, zoom: 11, bearing: 0, viewingAngle: 0)
-            locationManager.stopUpdatingLocation()
-        }
-    }
-    func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
-        lastHeading = newHeading
-        print("In RVLocation.didUpdateHeading \(newHeading)")
-        for delegate in delegates {
-            delegate.didUpdateHeading(heading: newHeading)
-        }
-        locationManager.stopUpdatingHeading()
-    }
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("In RVLocation.didFailWithError \(error.localizedDescription)")
-    }
-    func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
-        print("In RVLocation.didEnterRegion")
-    }
-    func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
-        print("In RVLocation.didExitRegion")
-    }
-    func locationManagerDidPauseLocationUpdates(_ manager: CLLocationManager) {
-        print("In RVLocation.didPaulLocationUpdates")
-    }
-    func locationManagerDidResumeLocationUpdates(_ manager: CLLocationManager) {
-        print("In RVLocation.didResumeLocationUpdates")
-    }
-    
-}
-extension RVLocation: CLLocationManagerDelegate {
 
+            }
+        }
+        
+        self.dirties = [String: AnyObject]()
+        
+    }
+    var coordinate: CLLocationCoordinate2D? {
+        get {
+            if let latitude = self.latitude {
+                if let longitude = self.longitude {
+                    return CLLocationCoordinate2DMake(latitude , longitude)
+                }
+            }
+            return nil
+        }
+        set {
+            if let coordinate = newValue {
+                self.latitude = coordinate.latitude
+                self.longitude = coordinate.longitude
+            } else {
+                self.latitude = nil
+                self.longitude = nil
+            }
+        }
+    }
+    var latitude: CLLocationDegrees? {
+        get { return getNSNumber(key: .latitude) as? CLLocationDegrees }
+        set {
+            if let value = newValue {
+                updateNumber(key: .latitude, value: NSNumber(value: Double(value)) , setDirties: true)
+            } else {
+                updateNumber(key: .latitude, value: nil , setDirties: true)
+            }
+        }
+    }
+    var longitude: CLLocationDegrees? {
+        get { return getNSNumber(key: .longitude) as? CLLocationDegrees }
+        set {
+            if let value = newValue {
+                updateNumber(key: .longitude, value: NSNumber(value: Double(value)) , setDirties: true)
+            } else {
+                updateNumber(key: .longitude, value: nil , setDirties: true)
+            }
+        }
+    }
+    var address: String? {
+        get { return getString(key: .address) }
+        set { updateString(key: .address, value: newValue, setDirties: true)}
+    }
+    var place_id: String? {
+        get { return getString(key: .place_id) }
+        set { updateString(key: .place_id, value: newValue, setDirties: true)}
+    }
+
+    var record_id: String? {
+        get { return getString(key: .record_id) }
+        set { updateString(key: .record_id, value: newValue, setDirties: true)}
+    }
+    var reference: String? {
+        get { return getString(key: .reference) }
+        set { updateString(key: .reference, value: newValue, setDirties: true)}
+    }
+    var iconURL: URL? {
+        get {
+            if let raw = getString(key: .iconURL) {
+                return URL(string: raw)
+            } else {
+                return nil
+            }
+        
+        }
+        set {
+            if let url = newValue {
+                updateString(key: .iconURL, value: url.absoluteString, setDirties: true)
+            } else {
+                updateString(key: .iconURL, value: nil, setDirties: true)
+            }
+            
+        }
+    }
+    var types: [String]? {
+        get {
+            if let array = objects[RVKeys.types.rawValue] as? [String] { return array }
+            return nil
+        }
+        set {
+            updateAnyObject(key: .types, value: newValue as AnyObject , setDirties: true)
+        }
+    }
+    func toString() -> String {
+        var output = ""
+        if let value = self.title {
+            output = "\(output) Title = \(value), "
+        } else {
+            output = "\(output) <no title>, "
+        }
+        if let value = self.address {
+            output = "\(output) address = \(value), "
+        } else {
+            output = "\(output) <no address>, "
+        }
+        if let latitude = self.latitude {
+            output = "\(output) Latitude = \(latitude), "
+        } else {
+            output = "\(output) <no latitude>, "
+        }
+        if let value = self.longitude {
+            output = "\(output) Longitude = \(value), "
+        } else {
+            output = "\(output) <no longitude>,"
+        }
+        
+        if let value = self.iconURL {
+            output = "\(output) IconURL = \(value.absoluteString), "
+        } else {
+            output = "\(output) <no iconURL>\n"
+        }
+        if let image = self.image {
+            output = "\(output) -- ImageObject: \(image.toString())"
+        } else {
+            output = "\(output) < no image>"
+        }
+        return output
+    }
 }
-protocol RVLocationDelegate: class {
-    var identifier: TimeInterval { get }
-    func didUpdateLocation(location: CLLocation)-> Void
-    func didUpdateHeading(heading: CLHeading) -> Void
-}
+
+
+
+
