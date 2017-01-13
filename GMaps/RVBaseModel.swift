@@ -80,6 +80,11 @@ class RVBaseModel: NSObject {
         if let number = objects[key.rawValue] as? NSNumber { return number }
         return nil
     }
+    func getBool(key: RVKeys) -> Bool? {
+        if let bool = objects[key.rawValue] as? Bool { return bool }
+        return nil
+    }
+
     func updateAnyObject(key: RVKeys, value: AnyObject = NSNull(), setDirties: Bool = false) {
         objects[key.rawValue] = value
         if setDirties { dirties[key.rawValue] = value }
@@ -115,6 +120,24 @@ class RVBaseModel: NSObject {
                 self.updateAnyObject(key: key, value: NSNull(), setDirties: setDirties)
             } else {
                // both new and existing are nil or non-existent; don't do anything
+            }
+        }
+    }
+    func updateBool(key: RVKeys, value: Bool? = nil, setDirties: Bool = false) {
+        if let value = value {
+            if let current = getBool(key: key) {
+                if current != value {
+                    self.updateBool(key: key, value: value , setDirties: setDirties)
+                }
+            } else {
+                self.updateBool(key: key, value: value , setDirties: setDirties)
+            }
+        } else {
+            if let _ = getBool(key: key) {
+                // current a non-null value 
+                self.updateBool(key: key, value: nil, setDirties: setDirties)
+            } else {
+                // both new and existing are nil or non-existent; don't do anything
             }
         }
     }

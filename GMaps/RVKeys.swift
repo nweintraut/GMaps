@@ -45,4 +45,5 @@ enum RVKeys: String {
     case neighborhood = "neighborhood"
     case street_number = "street_number"
     case route = "route"
+    case geocoded = "geocoded"
 }

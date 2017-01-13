@@ -35,23 +35,27 @@ class RVLocation: RVBaseModel {
         print("In RVLocation, Neil, need to create id creationg")
         absorbPlaces(rawPlaces: rawPlaces)
         print("IN RVLocation, need to create ID create for rawPlaces init")
+        self.geocoded = true
     }
     init(googlePlace: GMSPlace) {
         super.init()
         self.modelType = RVLocation.absoluteModelType
         print("IN RVLocation, need to create ID create for googlePlace init")
         absorbPlace(place: googlePlace)
+        self.geocoded = true
     }
     init(gmsAddress: GMSAddress) {
         super.init()
         self.modelType = RVLocation.absoluteModelType
         print("IN RVLocation, need to create ID create for gmsAddress init")
         absorbGMSAddress(gmsAddress: gmsAddress)
+        self.geocoded = true
     }
     init(geocode: [String : AnyObject]) {
         super.init()
         self.modelType = RVLocation.absoluteModelType
         absorbGeocode(geocode: geocode)
+        self.geocoded = true
     }
     private func absorbPlace(place: GMSPlace) {
         self.latitude = place.coordinate.latitude
@@ -266,6 +270,10 @@ class RVLocation: RVBaseModel {
                 updateNumber(key: .longitude, value: nil , setDirties: true)
             }
         }
+    }
+    var geocoded: Bool? {
+        get { return getBool(key: .geocoded) }
+        set { updateBool(key: .geocoded, value: newValue, setDirties: true) }
     }
     var address: String? {
         get { return getString(key: .address) }
