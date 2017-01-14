@@ -43,6 +43,7 @@ class RVLocation: RVBaseModel {
         print("IN RVLocation, need to create ID create for googlePlace init")
         absorbPlace(place: googlePlace)
         self.geocoded = true
+        self.generateGeoIndex()
     }
     init(gmsAddress: GMSAddress) {
         super.init()
@@ -50,6 +51,7 @@ class RVLocation: RVBaseModel {
         print("IN RVLocation, need to create ID create for gmsAddress init")
         absorbGMSAddress(gmsAddress: gmsAddress)
         self.geocoded = true
+        self.generateGeoIndex()
     }
     init(geocode: [String : AnyObject]) {
         super.init()
@@ -93,12 +95,14 @@ class RVLocation: RVBaseModel {
         self.place_id = place.placeID
         if let url = place.website { self.website = url }
         if let phone = place.phoneNumber { self.phoneNumber = phone }
-        
+        self.generateGeoIndex()
     }
+
     private func absorbGeocode(geocode: [String: AnyObject]) {
         var title = ""
         if let geometry = geocode[RVGooglePlace.Keys.geometry.rawValue] as? [String : AnyObject] {
             if let location = geometry[RVGooglePlace.Keys.location.rawValue] as? [String : NSNumber] {
+                //print("In \(self.classForCoder).geometry is \(geometry) and location is \(location)  -----------------")
                 if let latitude = location[RVGooglePlace.Keys.lat.rawValue] {
                     if let longitude = location[RVGooglePlace.Keys.lng.rawValue] {
                         self.latitude = latitude.doubleValue
@@ -106,6 +110,8 @@ class RVLocation: RVBaseModel {
                     }
                 }
             }
+        } else {
+            print("In \(self.classForCoder).absorbGeocode, geometry did not cast: \(geocode[RVGooglePlace.Keys.geometry.rawValue]) ---------------")
         }
         if let formattedAddress = geocode[GeocodeKeys.formatted_address.rawValue] as? String {
             self.lines = [formattedAddress]
@@ -183,13 +189,15 @@ class RVLocation: RVBaseModel {
         if title != "" { self.title = title }
     }
     private func absorbGMSAddress(gmsAddress: GMSAddress) {
-        let coordinate = gmsAddress.coordinate
-        self.latitude = coordinate.latitude
-        self.longitude = coordinate.longitude
-        if let string = gmsAddress.thoroughfare {self.thoroughfare = string }
-        if let string = gmsAddress.locality {self.locality = string }
+        if (gmsAddress.coordinate.latitude != kCLLocationCoordinate2DInvalid.latitude) &&  (gmsAddress.coordinate.longitude != kCLLocationCoordinate2DInvalid.longitude){
+            let coordinate = gmsAddress.coordinate
+            self.latitude = coordinate.latitude
+            self.longitude = coordinate.longitude
+        }
+        if let string = gmsAddress.thoroughfare {self.thoroughfare = string }  // Street number and name
+        if let string = gmsAddress.locality {self.locality = string }  // Locality or city
         if let string = gmsAddress.subLocality {self.subLocality = string }
-        if let string = gmsAddress.administrativeArea {self.administrativeArea = string }
+        if let string = gmsAddress.administrativeArea {self.administrativeArea = string } // Region or State or Administrative area
         if let string = gmsAddress.postalCode {self.postalCode = string }
         if let string = gmsAddress.country {self.country = string }
         if let array  = gmsAddress.lines {self.lines = array }
@@ -251,6 +259,15 @@ class RVLocation: RVBaseModel {
             }
         }
     }
+    var geometry: [String : AnyObject]? {
+        get {
+            if let dictionary = objects[RVKeys.geometry.rawValue] as? [String : AnyObject] { return dictionary }
+            return nil
+        }
+        set {
+            updateAnyObject(key: .geometry, value: newValue as AnyObject , setDirties: true)
+        }
+    }
     var latitude: CLLocationDegrees? {
         get { return getNSNumber(key: .latitude) as? CLLocationDegrees }
         set {
@@ -271,9 +288,25 @@ class RVLocation: RVBaseModel {
             }
         }
     }
+    private func generateGeoIndex() -> [String : AnyObject]? {
+        return RVGeosearch(latitude: self.latitude, longitude: self.longitude).recordDictionary
+    }
+    var geoIndex: [String : AnyObject]? {
+        get {
+            if let dictionary = objects[RVKeys.geoIndex.rawValue] as? [String : AnyObject] { return dictionary }
+            return nil
+        }
+        set {
+            if let dictionary = newValue {
+                self.updateAnyObject(key: .geoIndex, value: dictionary as AnyObject, setDirties: true)
+            } else {
+                self.updateAnyObject(key: .geoIndex, value: NSNull(), setDirties: true)
+            }
+        }
+    }
     var geocoded: Bool? {
         get { return getBool(key: .geocoded) }
-        set { updateBool(key: .geocoded, value: newValue, setDirties: true) }
+        set { updateAnyObject(key: .geocoded, value: newValue as AnyObject, setDirties: true) }
     }
     var address: String? {
         get { return getString(key: .address) }

@@ -23,6 +23,7 @@ enum RVKeys: String {
     case url = "url"
     
     // location
+    case geometry = "geometry"
     case latitude = "latitude"
     case longitude = "longitude"
     case address   = "address"
@@ -46,4 +47,5 @@ enum RVKeys: String {
     case street_number = "street_number"
     case route = "route"
     case geocoded = "geocoded"
+    case geoIndex = "geoIndex"
 }
